@@ -35,29 +35,46 @@ bookmarkRouter
     };
 
     bookmarks.push(bookmark);
-    logger.info(`Card with id ${id} created`);
+    logger.info(`bookmark with id ${id} created`);
 
     res
       .status(201)
-      .location(`http://localhost:8000/card/${id}`)
+      .location(`http://localhost:8000/bookmark/${id}`)
       .json(bookmark);
 
+  });
+  
+
+  bookmarkRouter
+  .route('/bookmark/:id')
+  .get((req, res) => {
+    const { id } = req.params;
+
+    const bookmark = bookmarks.find(b => b.id === id);
+
+    if (!bookmark) {
+      logger.error(`bookmark with id ${id} not found.`);
+      return res
+        .status(404)
+        .send('Not Found');
+    }
+    res.json(bookmark);
   })
   .delete(bodyParser,(req, res) => {
     const { id } = req.params;
 
-    const listIndex = bookmarks.findIndex(li => li.id === id);
+    const bookmarkIndex = bookmarks.findIndex(b => b.id === id);
   
-    if (listIndex === -1) {
-      logger.error(`List with id ${id} not found.`);
+    if (bookmarkIndex === -1) {
+      logger.error(`Bookmark with id ${id} not found.`);
       return res
         .status(404)
         .send('Not Found');
     }
   
-    bookmarks.splice(listIndex, 1);
+    bookmarks.splice(bookmarkIndex, 1);
   
-    logger.info(`List with id ${id} deleted.`);
+    logger.info(`bookmark with id ${id} deleted.`);
     res
       .status(204)
       .end();
